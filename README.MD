@@ -45,10 +45,19 @@ You can access repository [here](https://github.com/ewinjuman/library-management
 
 ### 5. Running application
  - Ensure Docker is installed and running.
- - Build and run the services using Docker Compose:
+ - Build and run the services using Docker Compose
+ - there 2 type docker-compose:
+
+
+#### pull image from docker-hub
   ```sh
-  docker-compose up --build -d
+      docker-compose -f docker-compose.yaml -f docker-compose-hub.yaml up --build -d
   ```
+   #### build image on local
+  ```sh
+      docker-compose up --build -d
+  ``` 
+
 [**Back to contents**](#contents)
 
 ### 6. Tools
