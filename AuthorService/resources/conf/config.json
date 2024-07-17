@@ -1,0 +1,15 @@
+{
+  "apps": {
+    "name": "author",
+    "httpPort": 8083,
+    "grpcPort": 5083
+  },
+  "logger": {
+    "fileTdrLocation": "logs/authors.log",
+    "fileLocation": "logs/",
+    "fileName": "authors.log",
+    "fileMaxAge": 30,
+    "stdout": false,
+    "maskingLogJsonPath": "pin|token|data.access|data.pin"
+  }
+}

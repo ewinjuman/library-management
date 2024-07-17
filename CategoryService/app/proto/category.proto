@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package category;
+option go_package = ".CategoryService/app/proto";
+
+service CategoryService {
+  rpc GetCategory (GetCategoryRequest) returns (CategoryResponse);
+}
+
+message GetCategoryRequest {
+  uint32 id = 1;
+}
+
+message Category {
+  uint32 id = 1;
+  string name = 2;
+}
+
+message CategoryResponse {
+  Category category = 1;
+}
+
+message Empty {}

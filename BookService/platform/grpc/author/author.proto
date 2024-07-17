@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package author;
+option go_package = ".BookService/platform/grpc/author";
+
+service AuthorService {
+  rpc GetAuthor (GetAuthorRequest) returns (AuthorResponse);
+}
+
+message GetAuthorRequest {
+  uint32 id = 1;
+}
+
+message Author {
+  uint32 id = 1;
+  string name = 2;
+}
+
+message AuthorResponse {
+  Author author = 1;
+}
+
+message AuthorsResponse {
+  repeated Author authors = 1;
+}
+
+message Empty {}

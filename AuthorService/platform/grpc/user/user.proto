@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package user;
+option go_package = ".AuthorService/platform/grpc/user";
+
+service UserService {
+  rpc GetUser (GetUserRequest) returns (UserResponse);
+  rpc JwtInterceptor (JwtInterceptorRequest) returns (JwtInterceptorResponse);
+}
+
+message GetUserRequest {
+  uint32 id = 1;
+}
+message UserResponse {
+  uint32 id = 1;
+  string name = 2;
+  string username = 3;
+}
+
+message JwtInterceptorRequest {
+  string token = 1;
+}
+
+message JwtInterceptorResponse {
+  uint32 id = 1;
+  string username = 2;
+}
+
+message Empty {}

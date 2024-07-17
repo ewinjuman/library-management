@@ -1,0 +1,15 @@
+{
+  "apps": {
+    "name": "users",
+    "httpPort": 8081,
+    "grpcPort": 5081
+  },
+  "logger": {
+    "fileTdrLocation": "logs/users.log",
+    "fileLocation": "logs/",
+    "fileName": "users.log",
+    "fileMaxAge": 30,
+    "stdout": false,
+    "maskingLogJsonPath": "pin|token|data.access|data.pin|password"
+  }
+}

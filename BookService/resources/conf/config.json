@@ -1,0 +1,15 @@
+{
+  "apps": {
+    "name": "books",
+    "httpPort": 8080,
+    "grpcPort": 5080
+  },
+  "logger": {
+    "fileTdrLocation": "logs/books.log",
+    "fileLocation": "logs/",
+    "fileName": "books.log",
+    "fileMaxAge": 30,
+    "stdout": false,
+    "maskingLogJsonPath": "pin|token|data.access|data.pin"
+  }
+}

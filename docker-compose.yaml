@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: library
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  bookservice:
+    build: ./BookService
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: 12345
+      DB_NAME: library
+      DB_PORT: 5432
+      AUTHOR_GRPC: authorservice:5083
+      CATEGORY_GRPC: categoryservice:5084
+      USER_GRPC: userservice:5081
+      PWD: ${PWD}
+    volumes:
+      - ${PWD}/logs:/app/logs
+
+  authorservice:
+    build: ./AuthorService
+    ports:
+      - "8083:8083"
+      - "5083:5083"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: 12345
+      DB_NAME: library
+      DB_PORT: 5432
+      USER_GRPC: userservice:5081
+      PWD: ${PWD}
+    volumes:
+      - ${PWD}/logs:/app/logs
+
+  categoryservice:
+    build: ./CategoryService
+    ports:
+      - "8084:8084"
+      - "5084:5084"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: 12345
+      DB_NAME: library
+      DB_PORT: 5432
+      REDIS_ADDRESS:
+      USER_GRPC: userservice:5081
+      PWD: ${PWD}
+    volumes:
+      - ${PWD}/logs:/app/logs
+
+  userservice:
+    build: ./UserService
+    ports:
+      - "8081:8081"
+      - "5081:5081"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: 12345
+      DB_NAME: library
+      DB_PORT: 5432
+      JWT_SECRET: jwtSecret
+      PWD: ${PWD}
+    volumes:
+      - ${PWD}/logs:/app/logs
+
+volumes:
+  postgres_data:
+
+#  docker-compose up -d
+#  docker-compose up --build -d
+#  docker-compose stop

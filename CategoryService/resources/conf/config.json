@@ -1,0 +1,15 @@
+{
+  "apps": {
+    "name": "category",
+    "httpPort": 8084,
+    "grpcPort": 5084
+  },
+  "logger": {
+    "fileTdrLocation": "logs/category.log",
+    "fileLocation": "logs/",
+    "fileName": "category.log",
+    "fileMaxAge": 30,
+    "stdout": false,
+    "maskingLogJsonPath": "pin|token|data.access|data.pin"
+  }
+}
