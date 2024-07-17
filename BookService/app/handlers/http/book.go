@@ -103,9 +103,27 @@ func GetBorrow(c *fiber.Ctx) error {
 
 func GetBook(c *fiber.Ctx) error {
 	ctx := base.NewContext(c)
-	id, _ := c.ParamsInt("id")
+	id, _ := c.ParamsInt("id", 0)
 	book := usecase.NewBookUsecase(ctx.Session)
 	result, err := book.GetBook(id)
+	// Return status 200 OK.
+	return ctx.Response(result, err)
+}
+
+func GetRecommend(c *fiber.Ctx) error {
+	ctx := base.NewContext(c)
+
+	book := usecase.NewBookUsecase(ctx.Session)
+	result, err := book.GetRecommend()
+	// Return status 200 OK.
+	return ctx.Response(result, err)
+}
+
+func Search(c *fiber.Ctx) error {
+	ctx := base.NewContext(c)
+	keyword := c.Query("keyword")
+	book := usecase.NewBookUsecase(ctx.Session)
+	result, err := book.Search(keyword)
 	// Return status 200 OK.
 	return ctx.Response(result, err)
 }

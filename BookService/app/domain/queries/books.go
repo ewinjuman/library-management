@@ -14,6 +14,9 @@ type (
 		GetByID(id uint) (result entities.Book, err error)
 		AddStock(bookID uint) (err error)
 		ReduceStock(bookID uint) (err error)
+		GetRecommend(id []int) (result []entities.Book, err error)
+		GetRecommendRand(id []int, limit int) (result []entities.Book, err error)
+		Search(keyword string) (result []entities.Book, err error)
 	}
 
 	bookQueries struct {
@@ -83,5 +86,45 @@ func (r *bookQueries) ReduceStock(bookID uint) (err error) {
 	}
 	err = db.Exec("update books set stock = stock-1 where id = ?", bookID).Error
 
+	return
+}
+
+func (r *bookQueries) GetRecommend(id []int) (result []entities.Book, err error) {
+	db, err := database.MysqlConnection(r.session)
+	if err != nil {
+		return
+	}
+	err = db.Where("id in ?", id).Find(&result).Error
+	if err != nil {
+		err = repository.HandleMysqlError(err)
+		return
+	}
+	return
+}
+
+func (r *bookQueries) GetRecommendRand(id []int, limit int) (result []entities.Book, err error) {
+	db, err := database.MysqlConnection(r.session)
+	if err != nil {
+		return
+	}
+	err = db.Where("id not in ?", id).Order("RAND()").Limit(limit).Find(&result).Error
+	if err != nil {
+		err = repository.HandleMysqlError(err)
+		return
+	}
+	return
+}
+
+func (r *bookQueries) Search(keyword string) (result []entities.Book, err error) {
+	db, err := database.MysqlConnection(r.session)
+	if err != nil {
+		return
+	}
+	keyword = "%" + keyword + "%"
+	err = db.Where("title like ?", keyword).Find(&result).Error
+	if err != nil {
+		err = repository.HandleMysqlError(err)
+		return
+	}
 	return
 }

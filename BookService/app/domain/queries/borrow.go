@@ -16,6 +16,7 @@ type (
 		GetByUserIDAndBookID(userID uint, bookID uint, status string) (result entities.Borrow, err error)
 		UpdateBorrow(borrow *entities.Borrow) (err error)
 		GetWithStatus(status ...string) (result []entities.Borrow, err error)
+		CountTopBorrowBook() (bookIDs []int, err error)
 	}
 
 	borrowQueries struct {
@@ -104,5 +105,26 @@ func (r *borrowQueries) UpdateBorrow(borrow *entities.Borrow) (err error) {
 		return
 	}
 	err = db.Model(&borrow).Updates(borrow).Error
+	return
+}
+
+type BorrowedBook struct {
+	BookID     int `gorm:"column:book_id"`
+	CountValue int `gorm:"column:count_value"`
+}
+
+func (r *borrowQueries) CountTopBorrowBook() (bookIDs []int, err error) {
+	db, err := database.MysqlConnection(r.session)
+	if err != nil {
+		return
+	}
+
+	var results []BorrowedBook
+	db.Raw(`
+        SELECT book_id, COUNT(book_id) AS count_value FROM borrows GROUP BY book_id ORDER BY count_value DESC LIMIT 5;`).Scan(&results)
+
+	for _, result := range results {
+		bookIDs = append(bookIDs, result.BookID)
+	}
 	return
 }

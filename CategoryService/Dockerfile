@@ -1,11 +1,26 @@
-FROM golang:1.22.0-alpine3.19
+FROM golang:1.22.0-alpine3.19 AS builder
+LABEL stage-category=builder
 
-WORKDIR /app
+RUN apk update && apk add --no-cache git
+
+WORKDIR /go/src/CategoryService
 
 COPY . .
 
-RUN go mod download
+RUN go build -mod=readonly -o main
+RUN rm -rf vendor
 
-RUN go build -o main .
+FROM alpine:latest
 
-CMD ["./main"]
+RUN apk add --no-cache tzdata
+RUN apk add busybox-extras
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=builder /go/src/CategoryService/main /app
+COPY --from=builder /go/src/CategoryService/resources /app/resources
+
+RUN mkdir logs
+
+CMD /app/main

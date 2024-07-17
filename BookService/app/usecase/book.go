@@ -20,6 +20,8 @@ type (
 		Return(request *models.ReturnBookRequest) (response interface{}, err error)
 		GetBorrow() (response interface{}, err error)
 		GetBook(id int) (response interface{}, err error)
+		GetRecommend() (response interface{}, err error)
+		Search(keyword string) (response interface{}, err error)
 	}
 
 	bookUsecase struct {
@@ -73,7 +75,11 @@ func (h *bookUsecase) Borrow(request *models.BorrowBookRequest) (response interf
 	if book.Stock <= 0 {
 		err = Error.NewError(repository.BadRequestCode, repository.FailedStatus, "Out of stock")
 	}
-
+	borrow, _ := h.borrowQuery.GetByUserIDAndBookID(uint(request.UserID), uint(request.BookID), "borrowed")
+	if borrow.ID > 0 {
+		err = Error.NewError(repository.BadRequestCode, repository.FailedStatus, "already borrowed")
+		return
+	}
 	response, err = h.borrowQuery.Create(&entities.Borrow{
 		UserID: uint(request.UserID),
 		BookID: uint(request.BookID),
@@ -109,5 +115,30 @@ func (h *bookUsecase) GetBorrow() (response interface{}, err error) {
 
 func (h *bookUsecase) GetBook(id int) (response interface{}, err error) {
 	response, err = h.bookQuery.GetByID(uint(id))
+	return
+}
+
+func (h *bookUsecase) GetRecommend() (response interface{}, err error) {
+	results := make([]entities.Book, 0)
+	f, _ := h.borrowQuery.CountTopBorrowBook()
+	if len(f) > 0 {
+		c, _ := h.bookQuery.GetRecommend(f)
+		for _, v := range c {
+			results = append(results, v)
+		}
+	}
+	if len(f) < 5 {
+		c, _ := h.bookQuery.GetRecommendRand(f, 5-len(f))
+		for _, v := range c {
+			results = append(results, v)
+		}
+
+	}
+	response = results
+	return
+}
+
+func (h *bookUsecase) Search(keyword string) (response interface{}, err error) {
+	response, err = h.bookQuery.Search(keyword)
 	return
 }

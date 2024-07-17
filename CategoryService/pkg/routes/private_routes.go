@@ -12,5 +12,5 @@ func PrivateRoutes(a *fiber.App) {
 	v1 := a.Group("/v1")
 	v1.Post("/categories", middleware.JWTProtectedG, httpHandler.Create)
 	v1.Get("/categories", middleware.JWTProtectedG, httpHandler.Get)
-	v1.Get("/categories/:id", middleware.JWTProtectedG, httpHandler.GetCategory)
+	v1.Get("/categories/detail/:id", middleware.JWTProtectedG, httpHandler.GetCategory)
 }
